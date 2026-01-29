@@ -106,4 +106,11 @@ class User {
         $this->db->bind('id', $id);
         return $this->db->execute();
     }
+    
+    public function countUsersByRole($role) {
+        $this->db->query("SELECT COUNT(*) as count FROM users WHERE role = :role");
+        $this->db->bind('role', $role);
+        $row = $this->db->single();
+        return (int)$row['count'];
+    }
 }

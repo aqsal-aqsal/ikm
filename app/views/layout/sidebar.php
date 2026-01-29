@@ -52,6 +52,10 @@ $current_page = $url[0]; // dashboard, laporan, unit, etc.
                     <?= $current_page == 'user' ? '<span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span>' : '' ?>
                     Kelola Pengguna
                 </a>
+                <a href="<?= BASEURL; ?>/role" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors <?= $current_page == 'role' ? 'bg-sky-50 text-sky-700' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' ?>">
+                    <?= $current_page == 'role' ? '<span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span>' : '' ?>
+                    Pengaturan Role
+                </a>
                 <?php endif; ?>
             </nav>
         </div>
@@ -100,6 +104,7 @@ $current_page = $url[0]; // dashboard, laporan, unit, etc.
             <?php if ($_SESSION['user']['role'] === 'SUPERADMIN'): ?>
             <a href="<?= BASEURL; ?>/unit" class="block px-3 py-2 rounded-md text-base font-medium <?= $current_page == 'unit' ? 'bg-sky-50 text-sky-700' : 'text-slate-700 hover:text-slate-900 hover:bg-slate-50' ?>">Layanan</a>
             <a href="<?= BASEURL; ?>/user" class="block px-3 py-2 rounded-md text-base font-medium <?= $current_page == 'user' ? 'bg-sky-50 text-sky-700' : 'text-slate-700 hover:text-slate-900 hover:bg-slate-50' ?>">Pengguna</a>
+            <a href="<?= BASEURL; ?>/role" class="block px-3 py-2 rounded-md text-base font-medium <?= $current_page == 'role' ? 'bg-sky-50 text-sky-700' : 'text-slate-700 hover:text-slate-900 hover:bg-slate-50' ?>">Pengaturan Role</a>
             <?php endif; ?>
          </nav>
          <div class="pt-4 border-t border-slate-100">

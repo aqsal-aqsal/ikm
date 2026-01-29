@@ -72,7 +72,7 @@
                         <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Unit</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Nilai Rata-rata</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Detail</th>
-                        <?php if ($_SESSION['user']['role'] === 'SUPERADMIN'): ?>
+                        <?php if (!empty($data['can_delete'])): ?>
                         <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Aksi</th>
                         <?php endif; ?>
                     </tr>
@@ -100,7 +100,7 @@
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
                                 <button class="text-sky-600 hover:text-sky-900" onclick="alert('Detail saran: <?php echo htmlspecialchars($s['saran'] ?? '-'); ?>')">Lihat</button>
                             </td>
-                            <?php if ($_SESSION['user']['role'] === 'SUPERADMIN'): ?>
+                            <?php if (!empty($data['can_delete'])): ?>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
                                 <button class="text-red-600 hover:text-red-900" onclick="openDeleteModal(<?= $s['id']; ?>)">Hapus</button>
                             </td>

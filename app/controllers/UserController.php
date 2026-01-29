@@ -58,6 +58,12 @@ class UserController extends Controller {
                         $data['error'] = 'Gagal menghapus pengguna.';
                     }
                 }
+            } elseif ($action === 'save_role_permissions') {
+                if ($roleModel->savePermissions($_POST['permissions'] ?? [])) {
+                    $data['success'] = 'Pengaturan role berhasil disimpan.';
+                } else {
+                    $data['error'] = 'Gagal menyimpan pengaturan role.';
+                }
             }
         }
 
@@ -77,6 +83,7 @@ class UserController extends Controller {
 
         $data['units'] = $unitModel->getAllUnits();
         $data['roles'] = $roleModel->getRoles();
+        $data['role_permissions'] = $roleModel->getPermissions();
 
         // Search Filter (if implemented in model, currently doing client side or simple filter)
         // The model getAllUsers currently returns all. 

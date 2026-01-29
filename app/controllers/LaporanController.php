@@ -6,6 +6,7 @@ class LaporanController extends Controller {
 
         $surveyModel = $this->model('Survey');
         $unitModel = $this->model('Unit');
+        $roleModel = $this->model('Role');
         $unit_id = null;
         $units = [];
         $success = '';
@@ -13,7 +14,9 @@ class LaporanController extends Controller {
 
         // Handle Action
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'delete') {
-            if ($_SESSION['user']['role'] === 'SUPERADMIN') {
+            $perms = $roleModel->getPermissions();
+            $role = $_SESSION['user']['role'];
+            if (!empty($perms[$role]['delete_surveys'])) {
                 if ($surveyModel->deleteSurvey($_POST['id'])) {
                     $success = 'Data survey berhasil dihapus.';
                 } else {
@@ -67,6 +70,10 @@ class LaporanController extends Controller {
         $totalRecords = $surveyModel->countSurveys($search, $unit_id);
         $totalPages = ceil($totalRecords / $limit);
 
+        $perms = $roleModel->getPermissions();
+        $role = $_SESSION['user']['role'];
+        $can_delete = !empty($perms[$role]['delete_surveys']);
+
         $data = [
             'title' => 'Laporan Survey',
             'surveys' => $surveys,
@@ -76,7 +83,8 @@ class LaporanController extends Controller {
             'units' => $units,
             'unit_filter' => $unit_id, // Pass current filter to view
             'success' => $success,
-            'error' => $error
+            'error' => $error,
+            'can_delete' => $can_delete
         ];
 
         $this->view('layout/header', $data);

@@ -107,6 +107,8 @@
         <?php endif; ?>
     </div>
 
+    
+
     <!-- Modal Form -->
     <div id="user-modal" class="fixed inset-0 bg-black/30 flex items-center justify-center z-50 hidden">
         <div class="bg-white w-full md:max-w-md rounded-xl shadow-xl border border-slate-200 mx-4">
