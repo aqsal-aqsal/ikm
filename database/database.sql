@@ -27,13 +27,12 @@ CREATE TABLE IF NOT EXISTS `unsur_ikm` (
 
 CREATE TABLE IF NOT EXISTS `responden` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `nama` varchar(100) NOT NULL,
-  `umur` int(3) NOT NULL,
-  `jk` enum('L','P') NOT NULL,
-  `pendidikan` varchar(50) NOT NULL,
-  `pekerjaan` varchar(100) NOT NULL,
-  `waktu_buat` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
+  `nomor_polisi` varchar(32) NOT NULL,
+  `unit_id` int(11) NOT NULL,
+  `tanggal_survey` date NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `unit_id` (`unit_id`),
+  CONSTRAINT `fk_responden_unit` FOREIGN KEY (`unit_id`) REFERENCES `units` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `survey` (
@@ -42,6 +41,9 @@ CREATE TABLE IF NOT EXISTS `survey` (
   `unit_id` int(11) NOT NULL,
   `tanggal` date NOT NULL,
   `saran` text,
+  `total_nilai` int(11) NOT NULL,
+  `indeks` decimal(5,2) NOT NULL,
+  `kategori` char(1) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `responden_id` (`responden_id`),
   KEY `unit_id` (`unit_id`),

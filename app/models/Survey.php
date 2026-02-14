@@ -105,12 +105,7 @@ class Survey {
             SELECT 
                 s.*, 
                 u.nama as unit_nama,
-                r.nomor_polisi as responden_nopol,
-                r.nama as responden_nama,
-                r.umur as responden_umur,
-                r.jk as responden_jk,
-                r.pendidikan as responden_pendidikan,
-                r.pekerjaan as responden_pekerjaan
+                r.nomor_polisi as responden_nopol
             FROM survey s 
             LEFT JOIN units u ON s.unit_id = u.id 
             LEFT JOIN responden r ON s.responden_id = r.id
@@ -122,7 +117,7 @@ class Survey {
         }
         
         if ($search) {
-            $query .= " AND (r.nomor_polisi LIKE :search OR r.nama LIKE :search OR u.nama LIKE :search)";
+            $query .= " AND (r.nomor_polisi LIKE :search OR u.nama LIKE :search)";
         }
 
         $query .= " ORDER BY s.tanggal DESC LIMIT :limit OFFSET :offset";
@@ -151,7 +146,7 @@ class Survey {
         }
         
         if ($search) {
-            $query .= " AND (r.nomor_polisi LIKE :search OR r.nama LIKE :search OR u.nama LIKE :search)";
+            $query .= " AND (r.nomor_polisi LIKE :search OR u.nama LIKE :search)";
         }
 
         $this->db->query($query);
@@ -167,11 +162,6 @@ class Survey {
             SELECT 
                 s.tanggal,
                 r.nomor_polisi as responden_nopol,
-                r.nama as responden_nama,
-                r.umur as responden_umur,
-                r.jk as responden_jk,
-                r.pendidikan as responden_pendidikan,
-                r.pekerjaan as responden_pekerjaan,
                 u.nama as unit_nama,
                 s.indeks as nilai_rata,
                 s.saran
@@ -196,20 +186,12 @@ class Survey {
         try {
             $this->db->beginTransaction();
 
-            // 1. Insert Responden
-            $this->db->query("INSERT INTO responden (nomor_polisi, nama, umur, jk, pendidikan, pekerjaan, unit_id, tanggal_survey) VALUES (:nomor_polisi, :nama, :umur, :jk, :pendidikan, :pekerjaan, :unit_id, CURDATE())");
-            $this->db->bind('nomor_polisi', $data['nomor_polisi']);
-            // Use default values for fields that are no longer collected
-            $this->db->bind('nama', $data['nama'] ?? '-'); 
-            $this->db->bind('umur', $data['umur'] ?? 0);
-            $this->db->bind('jk', $data['jk'] ?? '-');
-            $this->db->bind('pendidikan', $data['pendidikan'] ?? '-');
-            $this->db->bind('pekerjaan', $data['pekerjaan'] ?? '-');
+            $this->db->query("INSERT INTO responden (nomor_polisi, unit_id, tanggal_survey) VALUES (:nomor_polisi, :unit_id, CURDATE())");
+            $this->db->bind('nomor_polisi', $data['nomor_polisi'] ?? '');
             $this->db->bind('unit_id', $data['unit_id']);
             $this->db->execute();
             $responden_id = $this->db->lastInsertId();
 
-            // 2. Insert Survey
             $total_nilai = 0;
             $count = 0;
             foreach ($data['jawaban'] as $val) {
@@ -228,19 +210,18 @@ class Survey {
             $this->db->query("INSERT INTO survey (responden_id, unit_id, tanggal, saran, total_nilai, indeks, kategori) VALUES (:responden_id, :unit_id, CURDATE(), :saran, :total_nilai, :indeks, :kategori)");
             $this->db->bind('responden_id', $responden_id);
             $this->db->bind('unit_id', $data['unit_id']);
-            $this->db->bind('saran', $data['saran']);
+            $this->db->bind('saran', $data['saran'] ?? null);
             $this->db->bind('total_nilai', $total_nilai);
             $this->db->bind('indeks', $indeks);
             $this->db->bind('kategori', $kategori);
             $this->db->execute();
             $survey_id = $this->db->lastInsertId();
 
-            // 3. Insert Answers
             $this->db->query("INSERT INTO survey_jawaban (survey_id, unsur_ikm_id, nilai) VALUES (:survey_id, :unsur_ikm_id, :nilai)");
             foreach ($data['jawaban'] as $unsur_id => $nilai) {
                 $this->db->bind('survey_id', $survey_id);
                 $this->db->bind('unsur_ikm_id', $unsur_id);
-                $this->db->bind('nilai', $nilai);
+                $this->db->bind('nilai', (int)$nilai);
                 $this->db->execute();
             }
 
